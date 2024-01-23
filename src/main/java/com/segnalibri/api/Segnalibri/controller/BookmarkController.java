@@ -1,15 +1,17 @@
 package com.segnalibri.api.Segnalibri.controller;
 
-import jakarta.validation.Valid;
 import com.segnalibri.api.Segnalibri.model.Bookmark;
+import com.segnalibri.api.Segnalibri.repository.BookmarkRepository;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import com.segnalibri.api.Segnalibri.repository.BookmarkRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/{userId}/bookmark")
@@ -63,16 +65,5 @@ public class BookmarkController {
     public void delete(Integer id) {
         bookmarkRepository.deleteById(id);
     }
-
-    @GetMapping("/title/{title}")
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public List<Bookmark> findContainingTitle(@PathVariable String title, @PathVariable Integer userId) {
-        return bookmarkRepository.findAllByUserId(userId)
-                .stream().filter(bookmark -> bookmark.getTitle().toLowerCase()
-                        .contains(title.toLowerCase()))
-                .sorted((Bookmark b1, Bookmark b2) -> b1.getTitle().compareToIgnoreCase(b2.getTitle()))
-                .collect(Collectors.toList());
-    }
-
 
 }
