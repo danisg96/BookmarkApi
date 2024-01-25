@@ -28,7 +28,7 @@ public class BookmarkController {
         return bookmarkRepository.findAllByUserId(userId);
     }
 
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public Bookmark findById(@PathVariable Integer id) {
         return bookmarkRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, new StringBuilder()
@@ -52,11 +52,13 @@ public class BookmarkController {
                     bookmark.setUpdateDate(LocalDateTime.now());
                     bookmarkRepository.save(bookmark);
                 },
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, new StringBuilder()
-                        .append("User with id ")
-                        .append(id)
-                        .append(" not found")
-                        .toString())
+                () -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, new StringBuilder()
+                            .append("User with id ")
+                            .append(id)
+                            .append(" not found")
+                            .toString());
+                }
         );
     }
 
@@ -66,4 +68,19 @@ public class BookmarkController {
         bookmarkRepository.deleteById(id);
     }
 
+    @GetMapping("/title/{title}/{pageNro}/{pageSize}")
+    public List<Bookmark> getTitlePaging(@PathVariable int userId,
+                                         @PathVariable String title,
+                                         @PathVariable int pageNro,
+                                         @PathVariable int pageSize){
+        Pageable pr = PageRequest.of(pageNro,pageSize);
+        Page<Bookmark> result = bookmarkRepository.findAllByUserIdAndTitleContaining(userId,
+                title,
+                pr);
+
+        if (result.getTotalElements() == 0)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No bookmarks found");
+
+        return result.getContent();
+    }
 }

@@ -32,8 +32,9 @@ public class Bookmark {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "created_at", columnDefinition = "DATE DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createDate;
+    @Builder.Default
+    @Column(name = "created_at")
+    private LocalDateTime createDate = LocalDateTime.now();
 
     @Column(name = "updated_at")
     private LocalDateTime updateDate;

@@ -25,6 +25,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Builder.Default
     @Column(name = "created_at")
     private LocalDateTime createDate = LocalDateTime.now();
 
