@@ -2,19 +2,19 @@ package com.segnalibri.api.Segnalibri.model;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookmark")
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class Bookmark {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
@@ -32,11 +32,23 @@ public class Bookmark {
     @Column(name = "user_id")
     private int userId;
 
-    @Nonnull
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "DATE DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createDate;
 
     @Column(name = "updated_at")
     private LocalDateTime updateDate;
 
+    public Bookmark(){
+
+    }
+
+    public Bookmark(Integer id, @Nonnull String title, String description, @Nonnull String url, int userId, LocalDateTime createDate, LocalDateTime updateDate) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.url = url;
+        this.userId = userId;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+    }
 }
