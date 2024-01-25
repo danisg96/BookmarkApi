@@ -28,19 +28,3 @@ CREATE TABLE IF NOT EXISTS bookmark (
 CREATE USER 'luca'@'%' IDENTIFIED BY 'luca';
 GRANT ALL PRIVILEGES ON *.* TO 'luca'@'%';
 FLUSH PRIVILEGES;
-
-insert into users (id,email) values (1,'danisg96@hotmail.it');
-
-insert into users (id,email) values (2,'danisg97@hotmail.it');
-
-insert into bookmark (title, description, url, user_id)
-values ('Sito1', 'primo sito salvato', 'https://primosito.it',1);
-
-insert into bookmark (title, description, url, user_id)
-values ('Sito2', 'secondo sito salvato', 'https://secondosito.it',1);
-
-insert into bookmark (title, description, url, user_id)
-values ('Sito1', 'primo sito salvato', 'https://primosito.com',2);
-
-insert into bookmark (title, description, url, user_id)
-values ('Sito2', 'secondo sito salvato', 'https://secondosito.com',2);

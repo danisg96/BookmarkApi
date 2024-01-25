@@ -1,6 +1,5 @@
 version: "3.7"
 services:
-
   mysqldb:
     image: "mysql:5.7.15"
     restart: always
@@ -9,7 +8,7 @@ services:
     networks:
       - springapimysql-net
     environment:
-      MYSQL_DATABASE: basics
+      MYSQL_DATABASE: bookmarks
       MYSQL_USER: root
       MYSQL_ROOT_PASSWORD: roomless
 networks:

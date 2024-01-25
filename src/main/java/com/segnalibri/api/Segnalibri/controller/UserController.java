@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User findById(@PathVariable Integer id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,new StringBuilder()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, new StringBuilder()
                         .append("User with id ")
                         .append(id)
                         .append(" not found")
@@ -39,13 +39,15 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@Valid @RequestBody User user) {
+    public void create(@Valid @RequestBody User user) throws ResponseStatusException {
         userRepository.findByEmail(user.getEmail())
-                .ifPresentOrElse(u1 -> new EmailFoundException(new StringBuilder()
-                                .append("Email ")
-                                .append(u1.getEmail())
-                                .append(" already in use")
-                                .toString()),
+                .ifPresentOrElse(u1 -> {
+                            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, new StringBuilder()
+                                    .append("Email  ")
+                                    .append(u1.getEmail())
+                                    .append(" already in use")
+                                    .toString());
+                        },
                         () -> userRepository.save(user)
                 );
     }
@@ -53,22 +55,32 @@ public class UserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@Valid @RequestBody User user, @PathVariable Integer id) {
+        userRepository.findByEmail(user.getEmail())
+                .ifPresent(u1 -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, new StringBuilder()
+                            .append("Email  ")
+                            .append(u1.getEmail())
+                            .append(" already in use")
+                            .toString());
+                });
         userRepository.findById(id).ifPresentOrElse(
                 u1 -> {
                     user.setUpdateDate(LocalDateTime.now());
                     userRepository.save(user);
                 },
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,new StringBuilder()
-                        .append("User with id ")
-                        .append(id)
-                        .append(" not found")
-                        .toString())
+                () -> {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, new StringBuilder()
+                            .append("User with id ")
+                            .append(id)
+                            .append(" not found")
+                            .toString());
+                }
         );
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(Integer id) {
+    public void delete(@PathVariable Integer id) {
         userRepository.deleteById(id);
     }
 
