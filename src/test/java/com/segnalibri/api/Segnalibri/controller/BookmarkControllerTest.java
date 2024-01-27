@@ -1,11 +1,14 @@
 package com.segnalibri.api.Segnalibri.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.segnalibri.api.Segnalibri.SegnalibriApplication;
+import com.segnalibri.api.Segnalibri.config.JwtService;
+import com.segnalibri.api.Segnalibri.config.SecurityConfig;
 import com.segnalibri.api.Segnalibri.model.Bookmark;
 import com.segnalibri.api.Segnalibri.repository.BookmarkRepository;
+import com.segnalibri.api.Segnalibri.repository.UserRepository;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -17,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -30,12 +34,16 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(controllers = BookmarkController.class)
+@ContextConfiguration(classes = {SegnalibriApplication.class, SecurityConfig.class, JwtService.class})
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 public class BookmarkControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    UserRepository userRepository;
 
     @MockBean
     BookmarkRepository bookmarkRepository;
@@ -56,7 +64,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(1)
     void userIsCreatedTest() throws Exception {
         given(bookmarkRepository.save(ArgumentMatchers.any(Bookmark.class)))
                 .willAnswer(invocation -> invocation.getArgument(0));
@@ -69,7 +76,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(2)
     void shouldGetAllBookmark() throws Exception {
         when(bookmarkRepository.findAllByUserId(ArgumentMatchers.anyInt()))
                 .thenReturn(List.of(bookmark));
@@ -85,7 +91,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(3)
     void shouldFindById() throws Exception {
         given(bookmarkRepository.findById(ArgumentMatchers.anyInt()))
                 .willAnswer(invocation -> Optional.of(Bookmark.builder()
@@ -105,7 +110,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(4)
     void shouldNotFindById() throws Exception {
         when(bookmarkRepository.findById(ArgumentMatchers.anyInt()))
                 .thenReturn(Optional.empty());
@@ -117,7 +121,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(5)
     void shouldUpdateGivenId() throws Exception {
         given(bookmarkRepository.findById(ArgumentMatchers.anyInt()))
                 .willAnswer(invocation -> Optional.of(Bookmark.builder()
@@ -140,7 +143,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(6)
     void shouldNotFindIdAndNotPostTest() throws Exception {
 
         when(bookmarkRepository.findById(ArgumentMatchers.anyInt()))
@@ -154,7 +156,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(7)
     void shouldDeleteById() throws Exception {
         doNothing().when(bookmarkRepository).deleteById(ArgumentMatchers.anyInt());
 
@@ -165,7 +166,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(8)
     void shouldFindByTitle() throws Exception {
         Page<Bookmark> page = Mockito.mock(Page.class);
         when(page.getTotalElements()).thenReturn(1L);
@@ -181,7 +181,6 @@ public class BookmarkControllerTest {
     }
 
     @Test
-    @Order(9)
     void ShouldNotFindByTitle() throws Exception{
         Page<Bookmark> page = Mockito.mock(Page.class);
         when(page.getTotalElements()).thenReturn(0L);
