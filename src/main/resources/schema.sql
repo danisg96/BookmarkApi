@@ -6,8 +6,10 @@ USE bookmarks;
 CREATE TABLE IF NOT EXISTS users (
 	id INT AUTO_INCREMENT NOT NULL,
 	email VARCHAR(512) NOT NULL,
+	password varchar(512) NULL,
 	created_at DATETIME NOT NULL DEFAULT NOW(),
 	updated_at DATETIME NULL,
+	role VARCHAR(64) NULL,
 	CONSTRAINT PK_User PRIMARY KEY (id)
 );
 
@@ -25,6 +27,6 @@ CREATE TABLE IF NOT EXISTS bookmark (
 );
 
 -- Utente non admin
-CREATE USER 'luca'@'%' IDENTIFIED BY 'luca';
+CREATE USER IF NOT EXISTS 'luca'@'%' IDENTIFIED BY 'luca';
 GRANT ALL PRIVILEGES ON *.* TO 'luca'@'%';
 FLUSH PRIVILEGES;
