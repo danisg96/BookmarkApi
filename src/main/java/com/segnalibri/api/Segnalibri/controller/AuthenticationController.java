@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("api/login")
+@RequestMapping("api/auth")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class AuthenticationController {
@@ -25,6 +25,7 @@ public class AuthenticationController {
 
 
     @PostMapping
+    @RequestMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public String authenticate(@RequestBody AuthRequest request) throws ResponseStatusException {
         Authentication authentication = authenticationManager.authenticate(
@@ -39,4 +40,7 @@ public class AuthenticationController {
 
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Error");
     }
+
+    //TODO aggiungere post per registazione
+    //TODO creare test per questo controller
 }
